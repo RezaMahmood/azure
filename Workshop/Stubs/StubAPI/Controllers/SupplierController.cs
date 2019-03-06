@@ -14,13 +14,29 @@ namespace StubAPI.Controllers
     [ApiController]
     public class SupplierController : ControllerBase
     {
+
+        [HttpGet]
+        [Route("Supplier/BasicAuth")]
+        public IActionResult GetBasicAuth([FromBody] ApiMessage payload)
+        {
+            return Ok(payload);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("Supplier/NoAuth")]
+        public IActionResult GetNoAuth([FromBody] ApiMessage payload)
+        {
+            return Ok(payload);
+        }
+
         [HttpPost]
         [Route("Supplier/BasicAuth")]
         public async Task<IActionResult> BasicAuth([FromBody] ApiMessage payload)
         {
             var containerName = "securesupplier";
             return await UploadToBlob(payload, containerName);
-        }        
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -50,7 +66,7 @@ namespace StubAPI.Controllers
             {
                 try
                 {
-                    var client = storageAccount.CreateCloudBlobClient();                    
+                    var client = storageAccount.CreateCloudBlobClient();
                     var cloudBlobContainer = client.GetContainerReference(containerName);
                     var containerCreated = await cloudBlobContainer.CreateIfNotExistsAsync();
 

@@ -20,7 +20,22 @@ namespace StubAPI.Controllers
         {
             var containerName = "secureonprem";
             return await UploadToBlob(payload, containerName);
-        }        
+        }
+
+        [HttpGet]        
+        [Route("OnPrem/BasicAuth")]
+        public IActionResult GetBasicAuth([FromBody] ApiMessage payload)
+        {
+            return Ok(payload);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("OnPrem/NoAuth")]
+        public IActionResult GetNoAuth([FromBody] ApiMessage payload)
+        {
+            return Ok(payload);
+        }
 
         [AllowAnonymous]
         [HttpPost]
