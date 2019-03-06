@@ -328,3 +328,11 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Project specific folders
+Workshop/Stubs/StubAPI/bin/
+Workshop/Stubs/StubAPI/obj/
+.vscode/
+Workshop/.DS_Store
+Workshop/Stubs/.DS_Store
+Workshop/Stubs/StubAPI/.DS_Store
