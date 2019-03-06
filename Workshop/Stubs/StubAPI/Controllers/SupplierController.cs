@@ -16,6 +16,21 @@ namespace StubAPI.Controllers
     {
 
         [HttpGet]
+        [AllowAnonymous]
+        [Route("EchoHeaders")]
+        public IActionResult EchoHeaders()
+        {
+            var headerKeys = Request.Headers.Keys;
+            var response = new List<string>();
+            foreach(var key in headerKeys)
+            {
+                response.Add(key + ":" + Request.Headers[key]);
+            }
+
+            return Ok(JsonConvert.SerializeObject(response));
+        }
+
+        [HttpGet]
         [Route("Supplier/BasicAuth")]
         public IActionResult GetBasicAuth([FromBody] ApiMessage payload)
         {
