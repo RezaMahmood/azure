@@ -20,21 +20,7 @@ namespace StubAPI.Controllers
         {
             var containerName = "secureonprem";
             return await UploadToBlob(payload, containerName);
-        }
-
-        [AllowAnonymous]
-        [HttpPost("OnPrem/Authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody]User user)
-        {
-            var authService = new AuthenticationService();
-            var authenticatedUser = authService.Authenticate(user.UserName, user.Password);
-            if(user==null)
-            {
-                return BadRequest(new{message="Username or password is incorrect"});
-            }
-
-            return Ok(authenticatedUser);
-        }
+        }        
 
         [AllowAnonymous]
         [HttpPost]
