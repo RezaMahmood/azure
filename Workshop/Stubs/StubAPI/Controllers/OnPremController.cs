@@ -6,55 +6,83 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StubAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class OnPremController : ControllerBase
     {
-
-        CloudStorageAccount storageAccount = null;
-        CloudBlobContainer cloudBlobContainer = null;
-
-        // POST api/values
         [HttpPost]
-        public async Task<IActionResult> NoAuth([FromBody] string content)
+        [Route("OnPrem/BasicAuth")]
+        public async Task<IActionResult> BasicAuth([FromBody] ApiMessage payload)
         {
-            var message = JsonConvert.DeserializeObject<ApiMessage>(content);
+            var containerName = "secureonprem";
+            return await UploadToBlob(payload, containerName);
+        }
 
-            string storageConnectionString = Environment.GetEnvironmentVariable("storageconnectionstring");
+        [AllowAnonymous]
+        [HttpPost("OnPrem/Authenticate")]
+        public async Task<IActionResult> Authenticate([FromBody]User user)
+        {
+            var authService = new AuthenticationService();
+            var authenticatedUser = authService.Authenticate(user.UserName, user.Password);
+            if(user==null)
+            {
+                return BadRequest(new{message="Username or password is incorrect"});
+            }
+
+            return Ok(authenticatedUser);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("OnPrem/NoAuth")]
+        public async Task<IActionResult> NoAuth([FromBody] ApiMessage payload)
+        {
+            var containerName = "onpremises";
+            return await UploadToBlob(payload, containerName);
+        }
+
+        private async Task<IActionResult> UploadToBlob(ApiMessage payload, string containerName)
+        {
+            var payloadAsString = JsonConvert.SerializeObject(payload).ToString();
+            Console.WriteLine("received message: " + payloadAsString);
+
+            string storageConnectionString = Environment.GetEnvironmentVariable("STORAGE_CONNECTION_STRING");
+
+            Console.WriteLine(storageConnectionString);
+
+            CloudStorageAccount storageAccount = null;
 
             if (!CloudStorageAccount.TryParse(storageConnectionString, out storageAccount))
             {
-                Console.WriteLine(
-
-                                    "A connection string has not been defined in the system environment variables. " +
-                                    "Add a environment variable named 'storageconnectionstring' with your storage " +
-                                    "connection string as a value.");
+                Console.WriteLine("Error parsing storageconnectionstring");
             }
-            else{
+            else
+            {
                 try
                 {
-                    var client = storageAccount.CreateCloudBlobClient();
-                    cloudBlobContainer = client.GetContainerReference("onpremises/" + message.TargetName);
-                    await cloudBlobContainer.CreateAsync();
+                    var client = storageAccount.CreateCloudBlobClient();                    
+                    var cloudBlobContainer = client.GetContainerReference(containerName);
+                    var containerCreated = await cloudBlobContainer.CreateIfNotExistsAsync();
+
+                    var fileName = DateTime.UtcNow.ToString() + ".json";
+
+                    var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
+                    await cloudBlockBlob.UploadTextAsync(payloadAsString);
 
 
                 }
-                catch (System.Exception)
+                catch (StorageException ex)
                 {
-                    
+                    Console.WriteLine("Error returned from Blob service: {0}", ex.Message);
                     throw;
-                }
-                finally
-                {
-
                 }
             }
 
             return StatusCode(202);
-
         }
 
 
