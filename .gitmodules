@@ -1,0 +1,3 @@
+[submodule "Workshop/APIM/reza-mns.scm.azure-api.net"]
+	path = Workshop/APIM/reza-mns.scm.azure-api.net
+	url = https://reza-mns.scm.azure-api.net
