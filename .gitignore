@@ -336,3 +336,5 @@ Workshop/Stubs/StubAPI/obj/
 Workshop/.DS_Store
 Workshop/Stubs/.DS_Store
 Workshop/Stubs/StubAPI/.DS_Store
+.DS_Store
+*.azcli
