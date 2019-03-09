@@ -8,11 +8,8 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using StubAPI.Models;
 
-namespace StubAPI.Services{
-
-    public interface IBlobService{
-        Task<bool> UploadToBlob(ApiMessage payload, string containerName);
-    }
+namespace StubAPI.Services
+{
     public class BlobService : IBlobService{
         public async Task<bool> UploadToBlob(ApiMessage payload, string containerName)
         {
