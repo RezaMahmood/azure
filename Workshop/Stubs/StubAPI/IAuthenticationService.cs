@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using StubAPI.Models;
 
 namespace StubAPI
 {

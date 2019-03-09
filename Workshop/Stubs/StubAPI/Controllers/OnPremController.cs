@@ -7,6 +7,8 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using StubAPI.Models;
+using StubAPI.Services;
 
 namespace StubAPI.Controllers
 {
@@ -14,15 +16,22 @@ namespace StubAPI.Controllers
     [ApiController]
     public class OnPremController : ControllerBase
     {
+        private readonly IBlobService blobService;
+
+        public OnPremController(IBlobService blobService)
+        {
+            this.blobService = blobService;
+        }
+
         [HttpPost]
         [Route("OnPrem/BasicAuth")]
         public async Task<IActionResult> BasicAuth([FromBody] ApiMessage payload)
         {
             var containerName = "secureonprem";
-            return await UploadToBlob(payload, containerName);
+            return await blobService.UploadToBlob(payload, containerName) ? StatusCode(202) : StatusCode(500);
         }
 
-        [HttpGet]        
+        [HttpGet]
         [Route("OnPrem/BasicAuth")]
         public IActionResult GetBasicAuth([FromBody] ApiMessage payload)
         {
@@ -43,48 +52,9 @@ namespace StubAPI.Controllers
         public async Task<IActionResult> NoAuth([FromBody] ApiMessage payload)
         {
             var containerName = "onpremises";
-            return await UploadToBlob(payload, containerName);
+            return await blobService.UploadToBlob(payload, containerName) ? StatusCode(202) : StatusCode(500);
         }
 
-        private async Task<IActionResult> UploadToBlob(ApiMessage payload, string containerName)
-        {
-            var payloadAsString = JsonConvert.SerializeObject(payload).ToString();
-            Console.WriteLine("received message: " + payloadAsString);
-
-            string storageConnectionString = Environment.GetEnvironmentVariable("STORAGE_CONNECTION_STRING");
-
-            Console.WriteLine(storageConnectionString);
-
-            CloudStorageAccount storageAccount = null;
-
-            if (!CloudStorageAccount.TryParse(storageConnectionString, out storageAccount))
-            {
-                Console.WriteLine("Error parsing storageconnectionstring");
-            }
-            else
-            {
-                try
-                {
-                    var client = storageAccount.CreateCloudBlobClient();                    
-                    var cloudBlobContainer = client.GetContainerReference(containerName);
-                    var containerCreated = await cloudBlobContainer.CreateIfNotExistsAsync();
-
-                    var fileName = DateTime.UtcNow.ToString() + ".json";
-
-                    var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
-                    await cloudBlockBlob.UploadTextAsync(payloadAsString);
-
-
-                }
-                catch (StorageException ex)
-                {
-                    Console.WriteLine("Error returned from Blob service: {0}", ex.Message);
-                    throw;
-                }
-            }
-
-            return StatusCode(202);
-        }
 
 
     }

@@ -1,4 +1,4 @@
-namespace StubAPI
+namespace StubAPI.Models
 {
     public class User{
         public string UserName { get; set; }

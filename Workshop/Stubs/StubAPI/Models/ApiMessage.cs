@@ -1,6 +1,6 @@
 using System;
 
-namespace StubAPI{
+namespace StubAPI.Models{
 public class ApiMessage
     {
         public string TargetName { get; set; }      
