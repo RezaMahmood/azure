@@ -53,12 +53,11 @@ Use following header for Basic Authentication
 
 ## Security
 	4. Secure your APIM instance
-		a. Deploy into a virtual network and prevent access from public internet
+		a. Deploy into a virtual network and prevent access from public internet [Note this can take up to 45 minutes]
 		b. Configure a per port flow for 3 endpoints using ports 8000 to 8003
 			i. Deploy Application Gateway into the vnet
    				- Configure Application Gateway to be the only way to talk to APIM via public IP
 				- Configure AppGateway to map ports
-    				- Look at https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway
 	5. Inject Basic Auth credentials as part of the flow.  e.g. If the target endpoint requires Basic Authentication but source endpoint does not have those credentials
 	6. You want to host your APIM instance using your own custom domain and secure using SSL.
 	7. Apply rate limiting to an API endpoint
@@ -66,9 +65,9 @@ Use following header for Basic Authentication
 ## Monitoring
 	6. Monitor your APIM instance
 		a. Understand the metrics available
-		b. Add an Alert to warn of Capacity constraints
+		b. Add a Notification to warn of Quota constraints
 		c. Set up a Log Analytics workspace and send APIM diagnostics to it
 	
 ## Availability and Backup
-	7. Make your APIM instance highly available across multiple regions.
-	8. Backup your APIM instance configuration and restore it to another region.
+	1. Make your APIM instance highly available across multiple regions. Note this will require the Premium tier of APIM
+	2. Backup your APIM instance configuration and restore it to another region.
