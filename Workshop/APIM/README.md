@@ -28,10 +28,13 @@ Use following header for Basic Authentication
 > Authorization Basic cmV6YTpvaHJlYWxseSE/IQ==
 
 ## Additional stuff
-	- Download Postman
+	- Download Postman to test REST endpoints - http://www.getpostman.com
+	- Download SoapUI to test SOAP endpoints - https://www.soapui.org/downloads/soapui.html
 	- SOAP WSDL: http://www.dneonline.com/calculator.asmx?wsdl
 
 # Workshop Challenges
+
+## Setup
 	1. Create an instance of API Management
 	2. Configure an API endpoint (choose from one above or create one using Logic App)
 		a. Create a POST operation with simple passthrough
@@ -47,13 +50,25 @@ Use following header for Basic Authentication
 			ii. Create a Postman request
 			iii. Verify response contains custom header
 	3. Enable source control for the configuration of APIM
+
+## Security
 	4. Secure your APIM instance
 		a. Deploy into a virtual network and prevent access from public internet
 		b. Configure a per port flow for 3 endpoints using ports 8000 to 8003
 			i. Deploy Application Gateway into the vnet
-				1) Configure Application Gateway to be the only way to talk to APIM via public IP
-				2) Configure AppGateway to map ports
+   				- Configure Application Gateway to be the only way to talk to APIM via public IP
+				- Configure AppGateway to map ports
+    				- Look at https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-integrate-internal-vnet-appgateway
+	5. Inject Basic Auth credentials as part of the flow.  e.g. If the target endpoint requires Basic Authentication but source endpoint does not have those credentials
+	6. You want to host your APIM instance using your own custom domain and secure using SSL.
+	7. Apply rate limiting to an API endpoint
 			
-		
-		
+## Monitoring
+	6. Monitor your APIM instance
+		a. Understand the metrics available
+		b. Add an Alert to warn of Capacity constraints
+		c. Set up a Log Analytics workspace and send APIM diagnostics to it
 	
+## Availability and Backup
+	7. Make your APIM instance highly available across multiple regions.
+	8. Backup your APIM instance configuration and restore it to another region.
